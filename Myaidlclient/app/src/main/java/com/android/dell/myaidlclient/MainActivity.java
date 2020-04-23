@@ -62,13 +62,18 @@ public class MainActivity extends AppCompatActivity {
             mBound = false;
         }
     }
+    //重写onServiceConnected()方法和onServiceDisconnected()方法
+    //在Activity与Service建立关联和解除关联的时候调用
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            //使用BookManager.Stub.asInterface()方法获取服务器端返回的IBinder对象
+            //将IBinder对象传换成了mBookManager接口对象
             mBookManager = BookManager.Stub.asInterface(service);
             mBound = true;
             if(mBookManager!= null){
                 try {
+                    //通过该对象调用在MyAIDLService.aidl文件中定义的接口方法,从而实现跨进程通信
                     mbook = mBookManager.getbooks();
                     Log.e(getLocalClassName(),mbook.toString());
                 } catch (RemoteException e) {
@@ -86,9 +91,12 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void attemptToBindService(){
+        //通过Intent指定服务端的服务名称和所在包，与远程Service进行绑定
+        //参数与服务器端的action要一致,即"服务器包名.aidl接口文件名"
         Intent intent = new Intent();
         intent.setAction("com.android.dell.myservice.aidl");
         intent.setPackage("com.android.dell.myservice");
+        //绑定服务,传入intent和ServiceConnection对象,重要
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
     /*public void addbook(Book book){
