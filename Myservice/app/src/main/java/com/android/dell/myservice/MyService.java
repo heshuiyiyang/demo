@@ -13,6 +13,7 @@ import java.util.List;
 public class MyService extends Service {
     public final String TAG = "aidl service";
     private List<Book> mBooks = new ArrayList<>();
+    //获得Bookmanager实例
     private final BookManager.Stub mBookManager = new BookManager.Stub() {
         @Override
         public List<Book> getbooks() throws RemoteException {
